@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Rotas do sistema
 func ConfigRoutes(router *gin.Engine, service service.APIServiceInterface) *gin.Engine {
 
 	router.Use(middleware.CORS())
@@ -20,23 +21,15 @@ func ConfigRoutes(router *gin.Engine, service service.APIServiceInterface) *gin.
 			userGroup.POST("/login", func(c *gin.Context) {
 				controller.Login(c, service)
 			})
-
-		}
-
-		produtoGroup := main.Group("/v1/produto")
-		{
-			produtoGroup.POST("/cadastrar", middleware.Auth(), func(c *gin.Context) {
-				controller.CreateProduto(c, service)
-			})
-
 		}
 
 		nfeGroup := main.Group("/v1/nfe")
 		{
 			nfeGroup.POST("/importar", middleware.Auth(), func(c *gin.Context) {
-				controller.ImportNFe(c, service)
+				controller.ImportNFeXML(c, service)
 			})
 		}
+
 	}
 	return router
 }

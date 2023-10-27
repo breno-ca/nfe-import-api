@@ -4,6 +4,7 @@ import (
 	"desafio-tecnico-backend/internal/config"
 	"errors"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -12,6 +13,7 @@ import (
 
 var secret []byte
 
+// Configura o segredo de acordo com as configurações do sistema
 func SecretConfig(config *config.Config) error {
 	secret = []byte(config.SECRET)
 
@@ -21,16 +23,21 @@ func SecretConfig(config *config.Config) error {
 	return nil
 }
 
+// Cria um novo token de autenticação JWT e retorna como string
 func NewToken(cnpj uint64) (string, error) {
+
+	cnpjStr := strconv.FormatUint(cnpj, 10)
+
 	permissions := jwt.MapClaims{}
 	permissions["authorized"] = true
 	permissions["exp"] = time.Now().Add(time.Hour * 6).Unix()
-	permissions["CNPJ"] = cnpj
+	permissions["CNPJ"] = cnpjStr
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, permissions)
 	return token.SignedString(secret)
 }
 
+// Pega o token de autenticação em forma de string
 func GetToken(c *gin.Context) (string, error) {
 	const bearer_schema = "Bearer "
 	header := c.GetHeader("Authorization")
@@ -48,6 +55,7 @@ func GetToken(c *gin.Context) (string, error) {
 	return token, nil
 }
 
+// Valida um token de autenticação JWT em formato string
 func ValidateToken(token string) error {
 	_, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		_, isValid := t.Method.(*jwt.SigningMethodHMAC)
@@ -65,51 +73,27 @@ func ValidateToken(token string) error {
 
 }
 
-func GetCnpjFromToken(token string) (uint64, error) {
-	tokenClaims := jwt.MapClaims{}
-	_, err := jwt.ParseWithClaims(token, tokenClaims, nil)
+// Retorna o CNPJ contido nas Claims do token JWT em formato de string
+func GetUserCNPJ(c *gin.Context) (string, error) {
+
+	tokenString, _ := GetToken(c)
+
+	claims := jwt.MapClaims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
 	if err != nil {
-		return 0, err
+		log.Println("error parsing the token")
+		return "", err
 	}
 
-	cnpj := tokenClaims["CNPJ"].(uint64)
-	return cnpj, nil
+	if !token.Valid {
+		log.Println("Invalid JWT token")
+	}
+
+	cnpj := claims["CNPJ"].(string)
+
+	return string(cnpj), nil
+
 }
-
-// func GetPermissions(c *gin.Context) (jwt.MapClaims, error) {
-// 	token, err := GetToken(c)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	permissions, err := ExtractToken(token)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return permissions, nil
-// }
-
-// func ExtractToken(tokenString string) (jwt.MapClaims, error) {
-// 	token, err := jwt.Parse(tokenString, keyFunc)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	permissions, ok := token.Claims.(jwt.MapClaims)
-// 	if !ok {
-// 		return nil, errors.New("error getting permissions")
-// 	}
-
-// 	return permissions, nil
-// }
-
-// func keyFunc(t *jwt.Token) (interface{}, error) {
-// 	_, ok := t.Method.(*jwt.SigningMethodHMAC)
-// 	if !ok {
-// 		return nil, fmt.Errorf("invalid method: %v,", t.Header["alg"])
-// 	}
-
-// 	return secret, nil
-
-// }

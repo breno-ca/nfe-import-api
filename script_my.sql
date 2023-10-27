@@ -12,18 +12,17 @@ CREATE TABLE destinatario (
     destinatario_id INT PRIMARY KEY AUTO_INCREMENT,
     cnpj VARCHAR(14) UNIQUE,
     xNome VARCHAR(255),
-    email VARCHAR(255),
-    enderDest JSON
+    email VARCHAR(255)
 );
 
 CREATE TABLE produto (
     produto_id INT PRIMARY KEY AUTO_INCREMENT,
-    cProd VARCHAR(20) UNIQUE,
-    cEAN VARCHAR(14) UNIQUE,
+    cProd VARCHAR(50) UNIQUE,
+    cEAN VARCHAR(50) UNIQUE,
     xProd VARCHAR(255),
-    uCom VARCHAR(10),
-    qCom DECIMAL(15, 2),
-    vUnCom DECIMAL(15, 2),
+    uCom VARCHAR(50),
+    qCom VARCHAR(50),
+    vUnCom VARCHAR(50),
     vCusto DECIMAL(15, 2),
     vPreco DECIMAL(15, 2)
 );
@@ -41,5 +40,4 @@ CREATE TABLE endereco (
     FOREIGN KEY (destinatario_id) REFERENCES destinatario(destinatario_id) 
 );
 
-INSERT INTO empresa VALUES (null, 10541434000152, "$2a$10$1TXJzkmloaQQ9npKzSPAp.AL1hP0SP85pp6tnMPdnm9W8w2aFr8xa");
-
+INSERT INTO empresa VALUES (null, 10541434000152, "$2a$10$1TXJzkmloaQQ9npKzSPAp.AL1hP0SP85pp6tnMPdnm9W8w2aFr8xa"); -- usuário teste com CNPJ do Emissor	- senha: senha123

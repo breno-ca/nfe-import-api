@@ -24,6 +24,7 @@ type DBConfig struct {
 	DB_DSN   string `json:"-"`
 }
 
+// Cria nova configuração de inicialização com base em um arquivo env
 func NewConfig(config *Config) *Config {
 
 	local_conf := defaultConfig()
@@ -79,6 +80,7 @@ func NewConfig(config *Config) *Config {
 	return local_conf
 }
 
+// Configuração padrão
 func defaultConfig() *Config {
 	default_config := Config{
 		SRV_PORT:    "8080",

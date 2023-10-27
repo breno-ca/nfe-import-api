@@ -10,7 +10,7 @@ ec2-107-21-58-94.compute-1.amazonaws.com:8080
 Certifique-se de seguir as etapas abaixo para configurar corretamente o projeto.
 
 ### 1. Banco de Dados
-O script de criação do banco de dados está presente no projeto, [insira o nome do script aqui]. Certifique-se de executar este script no seu banco de dados MySQL para criar as tabelas necessárias.
+O script de criação do banco de dados está presente no projeto, [Script MySQL](script_my.sql). Certifique-se de executar este script no seu banco de dados MySQL para criar as tabelas necessárias.
 
 ### 2. Arquivo de Configuração
 O arquivo `env.json` está localizado na raiz do projeto e contém as configurações necessárias. Certifique-se de adicionar as seguintes informações:

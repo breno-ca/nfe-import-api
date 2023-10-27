@@ -4,13 +4,13 @@ import (
 	"desafio-tecnico-backend/pkg/entity"
 	"desafio-tecnico-backend/pkg/security"
 	"desafio-tecnico-backend/pkg/service"
-	"encoding/xml"
 	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
+// Controller responsável pelo Login
 func Login(c *gin.Context, service service.UserServiceInterface) {
 
 	var user *entity.User
@@ -47,39 +47,17 @@ func Login(c *gin.Context, service service.UserServiceInterface) {
 
 }
 
-func CreateProduto(c *gin.Context, service service.ProdutoServiceInterface) {
-	var produto *entity.Prod
-	err := c.ShouldBind(&produto)
-	if err != nil {
-		sendError(c, http.StatusBadRequest, err)
-		return
-	}
-	ctx := c.Request.Context()
-	err = service.CreateProduto(produto, ctx)
-	if err != nil {
-		sendError(c, http.StatusInternalServerError, err)
-		return
-	}
-	send(c, http.StatusCreated, gin.H{
-		"message": "Produto cadastrado com sucesso",
-	})
-}
-
-func ImportNFe(c *gin.Context, service service.NFeImportServiceInterface) {
+// Controller responsável pela importação da NFe
+func ImportNFeXML(c *gin.Context, service service.NFeImportServiceInterface) {
 	xmlData, err := c.GetRawData()
 	if err != nil {
 		sendError(c, http.StatusBadRequest, err)
 		return
 	}
 
-	var nfe entity.NFe
-	if err := xml.Unmarshal(xmlData, &nfe); err != nil {
-		sendError(c, http.StatusBadRequest, err)
-		return
-	}
+	userCNPJ, _ := security.GetUserCNPJ(c)
 
-	ctx := c.Request.Context()
-	err = service.ImportNFeXML(&nfe, ctx)
+	err = service.ImportNFeXML(xmlData, c, userCNPJ)
 	if err != nil {
 		sendError(c, http.StatusInternalServerError, err)
 		return

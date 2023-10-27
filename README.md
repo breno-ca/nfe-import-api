@@ -3,7 +3,7 @@
 ## Descrição
 Este repositório contém uma API em GoLang que permite a importação de Notas Fiscais Eletrônicas (NFe) com o uso do framework Gin-gonic. A autenticação é feita por meio de JSON Web Tokens (JWT). A aplicação é containerizada com Docker e utiliza o banco de dados MySQL para armazenar os dados das NFe importadas.
 
-####* Serviço para teste das rotas online na AWS
+#### Serviço para teste das rotas online na AWS
 ec2-107-21-58-94.compute-1.amazonaws.com:8080
 
 ## Configuração

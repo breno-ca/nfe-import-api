@@ -7,12 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Middleware de autenticação de acessos das rotas
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const bearerSchema = "Bearer "
 		header := c.GetHeader("Authorization")
 		if header == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autenticação ausente"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "token de autenticacao ausente"})
 			c.Abort()
 			return
 		}
@@ -21,7 +22,7 @@ func Auth() gin.HandlerFunc {
 
 		err := security.ValidateToken(token)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autenticação inválido"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "token de autenticacao invalido"})
 			c.Abort()
 			return
 		}

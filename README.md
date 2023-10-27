@@ -50,7 +50,7 @@ docker run -p 8080:8080 nfe-import-api
 A API estará acessível em `http://localhost:8080`.
 
 ## Documentação da API
-Você pode encontrar a documentação da API e exemplos de solicitações no arquivo [Postman Collection](main/postman-collection.json) incluído neste repositório.
+Você pode encontrar a documentação da API e exemplos de solicitações no arquivo [Postman Collection](postman-collection.json) incluído neste repositório.
 
 ## Contribuições
 Contribuições são bem-vindas! Sinta-se à vontade para abrir problemas ou enviar solicitações pull.

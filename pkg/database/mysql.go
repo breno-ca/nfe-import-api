@@ -9,10 +9,14 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// Abertura e configuração do banco de dados MySQL
 func MySQL(conf *config.Config) *database_pool {
+
 	if db_pool != nil && db_pool.DB != nil {
+
 		return db_pool
 	} else {
+
 		db, err := sql.Open(conf.DB_DRIVE, conf.DB_DSN)
 		if err != nil {
 			log.Fatal(err)

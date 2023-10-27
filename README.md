@@ -20,10 +20,20 @@ Aqui está um exemplo de como o arquivo `env.json` pode ser configurado:
 
 ```json
 {
-    "Port": "8080",
-    "DBConnection": "user:password@tcp(database-host:3306)/database-name",
-    "JWTSecret": "seu-segredo-jwt-seguro"
+    "srv_port": "8080",
+    "web_ui": true,
+    "open_browser": true,
+    "db_config": {
+        "db_drive": "mysql",
+        "db_host": "",
+        "db_port": "3306",
+        "db_user": "admin",
+        "db_pass": "",
+        "db_name": "desafio_tecnico_backend"
+    },
+    "secret": "SNmObxzznpkelAY1QYnV9PhSnvZbHi2xe2q8U89ksNhcDFq1ezGGqosC4ypFaNjSLOeTYFHWkb8JlyA2hglf2j8N"
 }
+
 ```
 
 ### 3. Execução com Docker

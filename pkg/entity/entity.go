@@ -14,9 +14,10 @@ type NFe struct {
 }
 
 type InfNFe struct {
-	Emit Emit `xml:"emit"`
-	Dest Dest `xml:"dest"`
-	Det  Det  `xml:"det"`
+	Emit  Emit  `xml:"emit"`
+	Dest  Dest  `xml:"dest"`
+	Det   Det   `xml:"det"`
+	Total Total `xml:"total"`
 }
 
 type Emit struct {
@@ -85,14 +86,15 @@ type Prod struct {
 }
 
 type Total struct {
-	ICMSTot ICMSTot `json:"ICMSTot"`
+	ICMSTot ICMSTot `xml:"ICMSTot"`
 }
 
 type ICMSTot struct {
-	VProd      float64 `json:"vProd"`
-	VDesc      float64 `json:"vDesc"`
-	VFrete     float64 `json:"vFrete"`
-	VOutro     float64 `json:"vOutro"`
-	VAdicional float64 `json:"vAdicional"`
-	VMargem    float64 `json:"vMargem"`
+	VProd  float64 `xml:"vProd"`
+	VFrete float64 `xml:"vFrete"`
+	VSeg   float64 `xml:"vSeg"`
+	VDesc  float64 `xml:"vDesc"`
+	VOutro float64 `xml:"vOutro"`
+	// VAdicional float64 `xml:"vAdicional"`
+	// VMargem    float64 `xml:"vMargem"`
 }

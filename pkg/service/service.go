@@ -144,7 +144,7 @@ func (s *APIService) InsertEnderDest(CNPJ string, endereco *entity.EnderDest, ct
 }
 
 // Insere ou Atualiza o produto se existente
-func (s *APIService) UpsertProduto(produtos []*entity.Prod, ctx context.Context) error {
+func (s *APIService) UpsertProduto(produtos []*entity.Prod, totalICMS *entity.ICMSTot, ctx context.Context) error {
 
 	if len(produtos) == 0 {
 		return errors.New("erro: lista de produtos vazia")
@@ -159,6 +159,12 @@ func (s *APIService) UpsertProduto(produtos []*entity.Prod, ctx context.Context)
 
 	defer tx.Rollback()
 
+	// vProdTotal := totalICMS.VProd
+	// vFreteTotal := totalICMS.VFrete
+	// vSegTotal := totalICMS.VSeg
+	vDescTotal := totalICMS.VDesc
+	// vOutroTotal := totalICMS.VOutro
+
 	var sql string
 
 	var exists bool
@@ -170,11 +176,18 @@ func (s *APIService) UpsertProduto(produtos []*entity.Prod, ctx context.Context)
 
 		}
 
+		vMargem := 0.3
+
+		vDesc := (produto.VProd * vDescTotal) / totalICMS.VProd
+
+		vCusto := produto.VFrete + produto.VSeg + vDesc + produto.VOutro
+		vPreco := vCusto + (vCusto + vMargem)
+
 		if exists {
 
-			sql = `UPDATE produto SET vCusto = ? WHERE cEAN = ?`
+			sql = `UPDATE produto SET vCusto = ?, vPreco = ? WHERE cEAN = ?`
 
-			result, err := tx.ExecContext(ctx, sql, (produto.VFrete + produto.VSeg + produto.VDesc + produto.VOutro), produto.CEAN)
+			result, err := tx.ExecContext(ctx, sql, vCusto, vPreco, produto.CEAN)
 			if err != nil {
 				log.Println(err, "error on update")
 
@@ -187,9 +200,9 @@ func (s *APIService) UpsertProduto(produtos []*entity.Prod, ctx context.Context)
 
 		} else {
 
-			sql = `INSERT INTO produto (cProd, cEAN, xProd, uCom, qCom, vUnCom, vCusto) VALUES (?, ?, ?, ?, ?, ?, ?)`
+			sql = `INSERT INTO produto (cProd, cEAN, xProd, uCom, qCom, vUnCom, vCusto, vPreco) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
-			result, err := tx.ExecContext(ctx, sql, produto.CProd, produto.CEAN, produto.XProd, produto.UCom, produto.QCom, produto.VUnCom, (produto.VFrete + produto.VSeg + produto.VDesc + produto.VOutro))
+			result, err := tx.ExecContext(ctx, sql, produto.CProd, produto.CEAN, produto.XProd, produto.UCom, produto.QCom, produto.VUnCom, vCusto, vPreco)
 			if err != nil {
 				log.Println(err, "error on insert")
 			}
@@ -222,6 +235,7 @@ func (s *APIService) ImportNFeXML(xmlData []byte, ctx context.Context, userCNPJ 
 	nfeCNPJ := nfe.NFe.InfNFe.Emit.CNPJ
 	destCNPJ := nfe.NFe.InfNFe.Dest.CNPJ
 	produtos := nfe.NFe.InfNFe.Det.Prod
+	totalICMS := nfe.NFe.InfNFe.Total.ICMSTot
 	destinatario := nfe.NFe.InfNFe.Dest
 
 	if nfeCNPJ != userCNPJ {
@@ -238,7 +252,7 @@ func (s *APIService) ImportNFeXML(xmlData []byte, ctx context.Context, userCNPJ 
 		s.InsertEnderDest(destCNPJ, &destinatario.EnderDest, ctx)
 	}
 
-	s.UpsertProduto(produtos, ctx)
+	s.UpsertProduto(produtos, &totalICMS, ctx)
 
 	return nil
 
